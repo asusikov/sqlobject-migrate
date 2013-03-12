@@ -32,7 +32,6 @@ for moduleStr in dir(migration):
                     break
 
 Version.createTable(ifNotExists = True)
-Version.clearTable()
 
 def main():
     for migrationNumber in migrationOrder:

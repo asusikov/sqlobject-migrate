@@ -10,13 +10,11 @@ def read(fname):
 
 setup(
     name = "sqlobjectmigrate",
-    version = "0.0.10",
+    version = "0.0.11",
     author = "Alexander Susikov",
     author_email = "susikov.alexander@gmail.com",
     description = (""),
     license = "BSD",
-    keywords = "",
-    url = "",
     packages=['sqlobjectmigrate'],
     long_description=read('README'),
     classifiers=[
