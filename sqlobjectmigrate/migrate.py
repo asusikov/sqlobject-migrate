@@ -3,33 +3,38 @@ import os
 import sys
 import inspect
 
-dirName = os.path.dirname(os.path.abspath(__file__))
-dirName = os.path.abspath(os.path.join(dirName, os.path.pardir))
-sys.path.append(dirName)
 from sqlobjectmigrate.migrationBase import MigrationBase
+from sqlobjectmigrate.version import Version
 
-# Получать снаружи
-projectDir = "/home/sas/bigbird/trunk"
-
+projectDir = os.getcwd()
 migrationDir = os.path.abspath(os.path.join(projectDir, "db"))
 sys.path.append(projectDir)
 sys.path.append(migrationDir)
-
 import migration
 
 baseCls = MigrationBase
-subclasses = []
+migrationOrder = []
+subclasses = {}
 
 for moduleStr in dir(migration):
     module = getattr(migration, moduleStr)
     if inspect.ismodule(module):
+        base = os.path.basename(module.__file__)
+        migrationNumber = os.path.splitext(base)[0].split('_')[0]
         for clsStr in dir(module):
             cls = getattr(module, clsStr)
             if inspect.isclass(cls):
                 if clsStr == baseCls.__name__:
                     continue
                 if issubclass(cls, baseCls):
-                    subclasses.append(cls)
+                    migrationOrder.append(migrationNumber)
+                    subclasses[migrationNumber] = cls
+                    break
 
-for migrationClass in subclasses:
-    migrationClass().up()
+Version.createTable(ifNotExists = True)
+Version.clearTable()
+
+def main():
+    for migrationNumber in migrationOrder:
+        if not Version.select(Version.q.number == migrationNumber).count():
+            subclasses[migrationNumber]().upVersion(migrationNumber)
