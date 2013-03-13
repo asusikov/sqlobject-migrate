@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "sqlobjectmigrate",
-    version = "0.0.11",
+    version = "0.0.12",
     author = "Alexander Susikov",
     author_email = "susikov.alexander@gmail.com",
     description = (""),
