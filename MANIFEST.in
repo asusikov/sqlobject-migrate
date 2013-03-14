@@ -1,0 +1,1 @@
+include sqlobjectmigrate/template.mako
