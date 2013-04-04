@@ -11,7 +11,44 @@ def getMigrationDir():
     migrationDir = os.path.join(getDbDir(), 'migration')
     return migrationDir
 
+def getInitFilePath():
+    return os.path.join(getMigrationDir(), '__init__.py')
+
+def init():
+    print '===== init ====='
+    if os.path.exists(getDbDir()):
+        print '--> db folder exists'
+    else:
+        print '--> create db folder'
+        os.makedirs(getDbDir())
+    if os.path.exists(getMigrationDir()):
+        print '--> migration folder exists'
+    else:
+        print '--> create migration folder'
+        os.makedirs(getMigrationDir())
+    if os.path.exists(getInitFilePath()):
+        print '--> init file exists'
+    else:
+        print '--> create init file'
+        open(getInitFilePath(), 'w').close()
+
+def checkFolders():
+    if not os.path.exists(getDbDir()):
+        print 'Db folder does not exist. Run init command.'
+        return False
+    if not os.path.exists(getMigrationDir()):
+        print 'Migration folder does not exist. Run init command.'
+        return False
+    if not os.path.exists(getInitFilePath()):
+        print 'Init file does not exist. Run init command.'
+        return False
+    return True
+
 def up():
+
+    if not checkFolders():
+        return
+
     from sqlobjectmigrate.migrationBase import MigrationBase
     from sqlobjectmigrate.version import Version
 
@@ -48,6 +85,8 @@ def down():
 
 def generate(name, generateSql):
     print '===== generate migration ====='
+    if not checkFolders():
+        return 
     from mako.template import Template
     import time
 
@@ -59,10 +98,7 @@ def generate(name, generateSql):
     templateName = os.path.join(templateDir, 'template.mako')
     fileTemplate = Template(filename = templateName)
     nameCapitalize = name[0].capitalize() + name[1:]
-    if not os.path.exists(getMigrationDir()):
-        os.makedirs(getMigrationDir())
-    initFilePath = os.path.join(getMigrationDir(), '__init__.py')
-    with open(initFilePath, 'a') as initFile:
+    with open(getInitFilePath(), 'a') as initFile:
         initFile.write('__import__(\'migration.%s\')\n' % fileName)
     fullFileName = os.path.join(getMigrationDir(), fileName + '.py')
     print '--> write file %s.py' % fileName
@@ -76,11 +112,18 @@ def generate(name, generateSql):
 def main(args = sys.argv[1:]):
 
     parser = optparse.OptionParser()
+
     parser.add_option('-g', '--generate',
         dest = 'generate',
         action = 'store_true',
         default = False,
         help = 'Run generator')
+
+    parser.add_option('--init',
+        dest = 'init',
+        action = 'store_true',
+        default = False,
+        help = 'Initialize folders')
 
     parser.add_option('-u', '--up',
         dest = 'up',
@@ -100,6 +143,9 @@ def main(args = sys.argv[1:]):
         help = 'Generate with sql file')
 
     options, args = parser.parse_args(args)
+    if options.init:
+        init()
+        return
     if options.generate:
         if len(args) > 0:
             generate(args[0], options.generateSql)
