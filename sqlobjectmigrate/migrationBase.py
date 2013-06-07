@@ -13,7 +13,8 @@ class MigrationBase(object):
         read_data = None
         with open(fileName, 'r') as f:
             read_data = f.read()
-        sqlhub.getConnection().query(read_data)
+        if read_data:
+            sqlhub.getConnection().query(read_data)
 
     def getColumnDefinition(self, objectClass, columnName):
         return objectClass.sqlmeta.columnDefinitions[columnName].withClass(objectClass.sqlmeta.soClass)

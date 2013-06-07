@@ -3,7 +3,11 @@ from sqlobjectmigrate.migrationBase import MigrationBase
 class ${name}(MigrationBase):
 
     def up(self):
-        pass
+    %if sql:
+	    self.runSqlFile(self.getSameSqlFile(__file__))
+	%else:
+	    pass
+	%endif
 
     def down(self):
         pass
