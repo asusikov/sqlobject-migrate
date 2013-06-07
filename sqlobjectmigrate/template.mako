@@ -2,12 +2,9 @@ from sqlobjectmigrate.migrationBase import MigrationBase
 
 class ${name}(MigrationBase):
 
-    def up(self):
-    %if sql:
-	    self.runSqlFile(self.getSameSqlFile(__file__))
+	def up(self):
+	%if sql:
+		self.runSqlFile(self.getSameSqlFile(__file__))
 	%else:
-	    pass
+		pass
 	%endif
-
-    def down(self):
-        pass
