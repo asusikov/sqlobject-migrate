@@ -80,9 +80,6 @@ def up():
         if not Version.select(Version.q.number == migrationNumber).count():
             subclasses[migrationNumber]().upVersion(migrationNumber)
 
-def down():
-    print 'down'
-
 def generate(name, generateSql):
     print '===== generate migration ====='
     if not checkFolders():
@@ -129,13 +126,8 @@ def main(args = sys.argv[1:]):
         dest = 'up',
         action = 'store_true',
         default = False,
-        help = 'Up database')
+        help = 'Up database version')
 
-    parser.add_option('-d', '--down',
-        dest = 'down',
-        action = 'store_true',
-        default = False,
-        help = 'Down database')
     parser.add_option('--sql',
         dest = 'generateSql',
         action = 'store_true',
@@ -152,9 +144,6 @@ def main(args = sys.argv[1:]):
         return
     if options.up:
         up()
-        return
-    if options.down:
-        down()
         return
 
 if __name__ == '__main__':
