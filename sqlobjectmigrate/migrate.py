@@ -103,7 +103,7 @@ def generate(name, generateSql):
     fullFileName = os.path.join(getMigrationDir(), fileName + '.py')
     print '--> write file %s.py' % fileName
     with open(fullFileName, 'w') as file:
-        file.write(fileTemplate.render(name = nameCapitalize))
+        file.write(fileTemplate.render(name = nameCapitalize, sql = generateSql))
     if generateSql:
         fullSqlFileName = os.path.join(getMigrationDir(), fileName + '.sql')
         print '--> write sql file %s.sql' % fileName
